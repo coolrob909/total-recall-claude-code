@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "total-recall-claude-code"
+version = "0.1.0"
+description = "Persistent local + team memory for Claude Code sessions. SQLite + FTS5, no external runtime deps."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Robert Rodriguez" }
+]
+keywords = [
+    "claude-code",
+    "claude",
+    "memory",
+    "recall",
+    "session-history",
+    "fts5",
+    "sqlite",
+    "plugin"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Tools",
+]
+# Stdlib-only at runtime. No dependencies array on purpose.
+dependencies = []
+
+[project.urls]
+Homepage      = "https://github.com/<placeholder>/total-recall-claude-code"
+Documentation = "https://github.com/<placeholder>/total-recall-claude-code#readme"
+Repository    = "https://github.com/<placeholder>/total-recall-claude-code"
+Issues        = "https://github.com/<placeholder>/total-recall-claude-code/issues"
+Changelog     = "https://github.com/<placeholder>/total-recall-claude-code/blob/main/CHANGELOG.md"
+
+[project.scripts]
+# Optional CLIs available after `pip install`. The same scripts are
+# invokable as `python tools/<name>.py` when you've cloned the repo
+# directly into `.claude/plugins/total-recall/`.
+total-recall-search        = "tools.recall_search:main"
+total-recall-list          = "tools.recall_list:main"
+total-recall-team-search   = "tools.team_recall_search:main"
+total-recall-check-memory  = "tools.check_team_memory:main"
+total-recall-promote-lesson = "tools.promote_lesson:main"
+
+[tool.setuptools]
+# Package the runtime layout — hooks, lib, tools — preserving the
+# directory shape Claude Code's plugin convention expects.
+packages = ["lib", "tools"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]  # line-length handled separately
