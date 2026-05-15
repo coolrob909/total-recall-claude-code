@@ -28,6 +28,7 @@ url / service_key are missing — in which case the caller should treat
 team-recall as disabled and continue without it (the local SQLite path
 still works fine).
 """
+
 from __future__ import annotations
 
 import json

@@ -31,6 +31,7 @@ Exit codes:
   2 — invalid input (missing required arg, file exists, etc.)
   3 — repo root not found
 """
+
 from __future__ import annotations
 
 import argparse
@@ -110,16 +111,24 @@ def main() -> int:
         description="Draft a team-memory lesson file from the current session.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    p.add_argument("--slug", required=True, help="kebab-case file root, e.g. 'postgrest-needs-real-fk'")
+    p.add_argument(
+        "--slug", required=True, help="kebab-case file root, e.g. 'postgrest-needs-real-fk'"
+    )
     p.add_argument("--title", required=True, help="human-readable title (top of file)")
     p.add_argument("--symptom", required=True, help="one-paragraph problem statement")
     p.add_argument("--root-cause", dest="root_cause", required=True, help="one-paragraph cause")
     p.add_argument("--fix", required=True, help="concrete verification steps")
     p.add_argument("--example", required=True, help="real PR/commit/session reference")
     p.add_argument("--severity", default="medium", choices=["low", "medium", "high"])
-    p.add_argument("--ci-blind", dest="ci_blind", default=None, help="optional: why CI doesn't catch it")
-    p.add_argument("--force-overwrite", action="store_true", help="overwrite an existing lesson file")
-    p.add_argument("--print-only", action="store_true", help="print to stdout, do not write the file")
+    p.add_argument(
+        "--ci-blind", dest="ci_blind", default=None, help="optional: why CI doesn't catch it"
+    )
+    p.add_argument(
+        "--force-overwrite", action="store_true", help="overwrite an existing lesson file"
+    )
+    p.add_argument(
+        "--print-only", action="store_true", help="print to stdout, do not write the file"
+    )
     args = p.parse_args()
 
     repo_root = find_repo_root(Path.cwd())

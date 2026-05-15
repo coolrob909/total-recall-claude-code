@@ -9,6 +9,7 @@ Two modes:
 Used by the past-conversations skill when the agent wants to recall by date
 ("what did we work on yesterday?") rather than by keyword.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -91,9 +92,7 @@ def cmd_list(args: argparse.Namespace) -> int:
         proj = r.get("project_slug", "")
         print(f"  [{when}{branch_part}] {turns} turns • {sid}")
         print(f"    project: {proj}")
-    print(
-        "\nTip: pass --session <id> to dump the clean transcript of one session."
-    )
+    print("\nTip: pass --session <id> to dump the clean transcript of one session.")
     return 0
 
 

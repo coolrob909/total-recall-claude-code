@@ -27,6 +27,7 @@ Score is sum of:
 Returns a ranked list with title + relevant excerpt so the agent can
 decide which file to read in full.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -82,7 +83,11 @@ def best_excerpt(content: str, keywords: list[str], window: int = 240) -> str:
 
     paragraphs = [p.strip() for p in content.split("\n\n") if p.strip()]
     # Skip shebang / front matter / pure header blocks
-    paragraphs = [p for p in paragraphs if not p.startswith(("---", "**Status**", "**Last verified**", "**Severity**"))]
+    paragraphs = [
+        p
+        for p in paragraphs
+        if not p.startswith(("---", "**Status**", "**Last verified**", "**Severity**"))
+    ]
 
     best_para = ""
     best_count = -1
@@ -177,7 +182,9 @@ def search(team_dir: Path, keywords: list[str], limit: int) -> list[Hit]:
 def emit_text(hits: list[Hit], keywords: list[str]) -> None:
     if not hits:
         sys.stdout.write(f"No team-memory entries match: {' '.join(keywords)}\n")
-        sys.stdout.write("(Searched lessons/, runbooks/, decisions/. Archive intentionally excluded.)\n")
+        sys.stdout.write(
+            "(Searched lessons/, runbooks/, decisions/. Archive intentionally excluded.)\n"
+        )
         return
 
     sys.stdout.write(f"Found {len(hits)} relevant entry(ies) for: {' '.join(keywords)}\n\n")

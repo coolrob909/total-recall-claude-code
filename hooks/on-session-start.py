@@ -16,6 +16,7 @@ Token budget target: 2-3K tokens of distilled prose. We:
 Output format is intentionally plain text with light markdown so it reads
 naturally in the system prompt.
 """
+
 from __future__ import annotations
 
 import json

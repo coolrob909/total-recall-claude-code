@@ -26,6 +26,7 @@ What we REDACT:
 
 This module is stdlib-only (json + pathlib + datetime + re + os).
 """
+
 from __future__ import annotations
 
 import json
@@ -69,8 +70,10 @@ KEEP_BLOCK_TYPES = {"text"}
 # That's the right trade — engineers shouldn't be sharing literal JWTs in
 # session text.
 _BUILTIN_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{20,}"),
-                                                                 "<JWT-REDACTED>"),
+    (
+        re.compile(r"eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{20,}"),
+        "<JWT-REDACTED>",
+    ),
 ]
 
 
@@ -91,6 +94,7 @@ def _load_custom_redactions() -> list[tuple[re.Pattern[str], str]]:
     Returns an empty list on any error — never blocks session parsing.
     """
     import json
+
     candidates: list[Path] = []
     env_path = os.environ.get("TOTAL_RECALL_REDACTIONS")
     if env_path:

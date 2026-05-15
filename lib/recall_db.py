@@ -14,6 +14,7 @@ Ingestion is idempotent — re-running on the same JSONL won't dupe rows
 because we PRIMARY KEY on message uuid (Claude Code's stable per-message ID).
 That lets us call the ingest hook on every Stop event without worrying.
 """
+
 from __future__ import annotations
 
 import sqlite3

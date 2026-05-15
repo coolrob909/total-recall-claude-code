@@ -14,6 +14,7 @@ Exit codes are advisory — we never fail a session for a memory-write hiccup,
 because the user shouldn't notice when it works (or fails). Errors go to stderr
 and a sidecar log file.
 """
+
 from __future__ import annotations
 
 import json
@@ -54,9 +55,9 @@ def _log(msg: str) -> None:
 
 def _resolve_jsonl(payload: dict) -> Path | None:
     """Find the transcript path. Several possibilities depending on hook event:
-      1. payload['transcript_path'] (some Claude Code versions)
-      2. payload['session_id'] + payload['cwd_or_project_slug']
-      3. derive from the project slug + session UUID convention
+    1. payload['transcript_path'] (some Claude Code versions)
+    2. payload['session_id'] + payload['cwd_or_project_slug']
+    3. derive from the project slug + session UUID convention
     """
     tp = payload.get("transcript_path") or payload.get("transcriptPath")
     if isinstance(tp, str) and Path(tp).exists():
@@ -142,11 +143,11 @@ def main() -> int:
 
         msg_payload = [
             {
-                "uuid":        m.uuid,
+                "uuid": m.uuid,
                 "parent_uuid": m.parent_uuid,
-                "timestamp":   m.timestamp,
-                "role":        m.role,
-                "content":     m.content,  # already redacted by session_parser
+                "timestamp": m.timestamp,
+                "role": m.role,
+                "content": m.content,  # already redacted by session_parser
             }
             for m in messages
         ]

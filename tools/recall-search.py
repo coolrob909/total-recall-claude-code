@@ -12,6 +12,7 @@ Usage:
 The query syntax is FTS5's: terms are AND'd by default, use OR / NOT /
 parentheses for boolean logic, and "phrase" for exact match.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -93,9 +94,9 @@ def main() -> int:
         branch_part = f" • `{branch}`" if branch else ""
         snippet = (r.get("snippet") or "").replace("\n", " ")
         proj = r.get("project_slug", "")
-        print(f"{i}. [{when}{branch_part}] ({r.get('role','?')})")
+        print(f"{i}. [{when}{branch_part}] ({r.get('role', '?')})")
         print(f"   project: {proj}")
-        print(f"   session: {r.get('session_id','')}")
+        print(f"   session: {r.get('session_id', '')}")
         print(f"   snippet: {snippet}")
         print()
 

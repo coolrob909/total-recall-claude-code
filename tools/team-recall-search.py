@@ -21,6 +21,7 @@ spaces, use `OR` between alternatives, `"phrase"` for exact match,
     "schema OR migration"                  (either)
     '"saved reports" -archived'            (phrase, exclude term)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,10 +55,11 @@ def main() -> int:
     p.add_argument(
         "query_terms",
         nargs="+",
-        help="One or more terms / phrases. Joined with spaces and passed to "
-        "websearch_to_tsquery.",
+        help="One or more terms / phrases. Joined with spaces and passed to websearch_to_tsquery.",
     )
-    p.add_argument("--engineer", default=None, help="Filter to a specific engineer_id (e.g. 'alice')")
+    p.add_argument(
+        "--engineer", default=None, help="Filter to a specific engineer_id (e.g. 'alice')"
+    )
     p.add_argument("--project", default=None, help="Filter to a specific project_slug")
     p.add_argument("--limit", type=int, default=10)
     p.add_argument("--json", action="store_true", help="Emit JSON instead of text")

@@ -13,6 +13,7 @@ All errors are caught and surfaced via raised TeamRecallError. The
 hook layer wraps every call in try/except so a Postgres outage never
 breaks a session.
 """
+
 from __future__ import annotations
 
 import json
@@ -32,7 +33,9 @@ class _RpcResponse:
     body: Any
 
 
-def _rpc(url: str, service_key: str, fn_name: str, args: dict[str, Any], timeout: float = 8.0) -> _RpcResponse:
+def _rpc(
+    url: str, service_key: str, fn_name: str, args: dict[str, Any], timeout: float = 8.0
+) -> _RpcResponse:
     """Call a Postgres RPC via PostgREST."""
     endpoint = f"{url.rstrip('/')}/rest/v1/rpc/{fn_name}"
     data = json.dumps(args).encode("utf-8")
@@ -88,16 +91,16 @@ def ingest_session(
     payload: {session_id, messages_inserted, messages_total}.
     """
     args = {
-        "p_session_id":     session_id,
-        "p_engineer_id":    engineer_id,
-        "p_project_slug":   project_slug,
-        "p_started_at":     started_at,
-        "p_ended_at":       ended_at,
-        "p_turn_count":     turn_count,
+        "p_session_id": session_id,
+        "p_engineer_id": engineer_id,
+        "p_project_slug": project_slug,
+        "p_started_at": started_at,
+        "p_ended_at": ended_at,
+        "p_turn_count": turn_count,
         "p_tool_call_freq": tool_call_freq,
-        "p_git_branch":     git_branch,
-        "p_cwd":            cwd,
-        "p_messages":       messages,
+        "p_git_branch": git_branch,
+        "p_cwd": cwd,
+        "p_messages": messages,
     }
     resp = _rpc(url, service_key, "ingest_team_recall_session", args)
     if not isinstance(resp.body, dict):
@@ -118,7 +121,7 @@ def search(
     args: dict[str, Any] = {
         "p_query": query,
         "p_limit": limit,
-        "p_engineer_id":  engineer_id,
+        "p_engineer_id": engineer_id,
         "p_project_slug": project_slug,
     }
     resp = _rpc(url, service_key, "search_team_recall", args)
@@ -139,10 +142,10 @@ def list_recent(
     min_turns: int = 2,
 ) -> list[dict]:
     args: dict[str, Any] = {
-        "p_limit":         limit,
-        "p_engineer_id":   engineer_id,
-        "p_project_slug":  project_slug,
-        "p_min_turns":     min_turns,
+        "p_limit": limit,
+        "p_engineer_id": engineer_id,
+        "p_project_slug": project_slug,
+        "p_min_turns": min_turns,
     }
     resp = _rpc(url, service_key, "list_recent_team_recall", args)
     if resp.body is None:

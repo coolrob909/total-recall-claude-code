@@ -6,6 +6,7 @@ Run from the plugin dir:
 
 Stdlib-only so we can run it anywhere Python 3.10+ is installed.
 """
+
 from __future__ import annotations
 
 import json
@@ -90,10 +91,18 @@ class TestParser(unittest.TestCase):
             project_dir.mkdir()
             p = project_dir / "trunc.jsonl"
             with p.open("w", encoding="utf-8") as fh:
-                fh.write(json.dumps({
-                    "type": "user", "uuid": "u1", "timestamp": "2026-05-06T10:00:00Z",
-                    "sessionId": "s1", "message": {"role": "user", "content": "first"},
-                }) + "\n")
+                fh.write(
+                    json.dumps(
+                        {
+                            "type": "user",
+                            "uuid": "u1",
+                            "timestamp": "2026-05-06T10:00:00Z",
+                            "sessionId": "s1",
+                            "message": {"role": "user", "content": "first"},
+                        }
+                    )
+                    + "\n"
+                )
                 fh.write('{"type":"assistant","uuid":"a1","timestamp":"2026-05-06T10:00:01Z","sess')
             summary, msgs = parse_jsonl(p)
         self.assertEqual(summary.session_id, "s1")
@@ -110,15 +119,30 @@ class TestRecallDB(unittest.TestCase):
         db, _ = self._make_db()
         try:
             summary = SessionSummary(
-                session_id="s1", project_slug="proj",
-                started_at="2026-05-06T10:00:00Z", ended_at="2026-05-06T10:01:00Z",
-                turn_count=2, tool_call_freq={"Bash": 1}, git_branch="main", cwd="/r",
+                session_id="s1",
+                project_slug="proj",
+                started_at="2026-05-06T10:00:00Z",
+                ended_at="2026-05-06T10:01:00Z",
+                turn_count=2,
+                tool_call_freq={"Bash": 1},
+                git_branch="main",
+                cwd="/r",
             )
             msgs = [
-                Message(uuid="u1", parent_uuid=None, timestamp="2026-05-06T10:00:00Z",
-                        role="user", content="hello"),
-                Message(uuid="a1", parent_uuid="u1", timestamp="2026-05-06T10:00:30Z",
-                        role="assistant", content="hi there"),
+                Message(
+                    uuid="u1",
+                    parent_uuid=None,
+                    timestamp="2026-05-06T10:00:00Z",
+                    role="user",
+                    content="hello",
+                ),
+                Message(
+                    uuid="a1",
+                    parent_uuid="u1",
+                    timestamp="2026-05-06T10:00:30Z",
+                    role="assistant",
+                    content="hi there",
+                ),
             ]
             r1 = db.ingest(summary, msgs)
             r2 = db.ingest(summary, msgs)  # same payload again
@@ -132,20 +156,43 @@ class TestRecallDB(unittest.TestCase):
         db, _ = self._make_db()
         try:
             summary = SessionSummary(
-                session_id="s1", project_slug="proj",
-                started_at="2026-05-06T10:00:00Z", ended_at="2026-05-06T10:01:00Z",
-                turn_count=2, tool_call_freq={}, git_branch=None, cwd=None,
+                session_id="s1",
+                project_slug="proj",
+                started_at="2026-05-06T10:00:00Z",
+                ended_at="2026-05-06T10:01:00Z",
+                turn_count=2,
+                tool_call_freq={},
+                git_branch=None,
+                cwd=None,
             )
-            db.ingest(summary, [
-                Message(uuid="u1", parent_uuid=None, timestamp="2026-05-06T10:00:00Z",
-                        role="user", content="we need to update the database schema"),
-                Message(uuid="a1", parent_uuid="u1", timestamp="2026-05-06T10:00:30Z",
-                        role="assistant", content="run an ALTER TABLE migration on the rcs_saved_reports table"),
-            ])
+            db.ingest(
+                summary,
+                [
+                    Message(
+                        uuid="u1",
+                        parent_uuid=None,
+                        timestamp="2026-05-06T10:00:00Z",
+                        role="user",
+                        content="we need to update the database schema",
+                    ),
+                    Message(
+                        uuid="a1",
+                        parent_uuid="u1",
+                        timestamp="2026-05-06T10:00:30Z",
+                        role="assistant",
+                        content="run an ALTER TABLE migration on the rcs_saved_reports table",
+                    ),
+                ],
+            )
             results = db.search('"schema" OR "migration"', project_slug="proj", limit=5)
             self.assertEqual(len(results), 2)
             # Both messages should match; the assistant message has both keywords (well, "migration").
-            self.assertTrue(any("schema" in r["snippet"].lower() or "migration" in r["snippet"].lower() for r in results))
+            self.assertTrue(
+                any(
+                    "schema" in r["snippet"].lower() or "migration" in r["snippet"].lower()
+                    for r in results
+                )
+            )
         finally:
             db.close()
 
@@ -155,15 +202,23 @@ class TestRecallDB(unittest.TestCase):
             # Two sessions: one with 1 turn (noise), one with 4.
             for sid, n in [("noise", 1), ("real", 4)]:
                 summary = SessionSummary(
-                    session_id=sid, project_slug="proj",
-                    started_at="2026-05-06T10:00:00Z", ended_at="2026-05-06T10:01:00Z",
-                    turn_count=n, tool_call_freq={}, git_branch=None, cwd=None,
+                    session_id=sid,
+                    project_slug="proj",
+                    started_at="2026-05-06T10:00:00Z",
+                    ended_at="2026-05-06T10:01:00Z",
+                    turn_count=n,
+                    tool_call_freq={},
+                    git_branch=None,
+                    cwd=None,
                 )
                 msgs = [
-                    Message(uuid=f"{sid}-{i}", parent_uuid=None,
-                            timestamp=f"2026-05-06T10:0{i}:00Z",
-                            role=("user" if i % 2 == 0 else "assistant"),
-                            content=f"msg {i}")
+                    Message(
+                        uuid=f"{sid}-{i}",
+                        parent_uuid=None,
+                        timestamp=f"2026-05-06T10:0{i}:00Z",
+                        role=("user" if i % 2 == 0 else "assistant"),
+                        content=f"msg {i}",
+                    )
                     for i in range(n)
                 ]
                 db.ingest(summary, msgs)
@@ -204,16 +259,24 @@ class TestRedaction(unittest.TestCase):
         import importlib
         import json
         import tempfile
+
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-            json.dump([
-                {"pattern": r"MySecret[A-Za-z0-9]+", "replacement": "<USER-REDACTED>"},
-                {"pattern": r"(user@example\.com)\s*/\s*\S+", "replacement": r"\1 / <PW-REDACTED>"},
-            ], f)
+            json.dump(
+                [
+                    {"pattern": r"MySecret[A-Za-z0-9]+", "replacement": "<USER-REDACTED>"},
+                    {
+                        "pattern": r"(user@example\.com)\s*/\s*\S+",
+                        "replacement": r"\1 / <PW-REDACTED>",
+                    },
+                ],
+                f,
+            )
             path = f.name
         try:
             os.environ["TOTAL_RECALL_REDACTIONS"] = path
             # Force the module to re-load the patterns at import time
             import lib.session_parser as sp
+
             importlib.reload(sp)
             text = "Found MySecretABC123 and user@example.com / hunter2 in the log."
             redacted = sp.redact_secrets(text)
@@ -227,6 +290,7 @@ class TestRedaction(unittest.TestCase):
             os.unlink(path)
             # Restore the module to default state for any later tests
             import lib.session_parser as sp
+
             importlib.reload(sp)
 
     def test_jwt_pattern_does_not_match_short_base64(self) -> None:
@@ -243,8 +307,11 @@ class TestRedaction(unittest.TestCase):
             ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         )
         m = Message(
-            uuid="u1", parent_uuid=None, timestamp="2026-05-07T10:00:00Z",
-            role="user", content=f"my session token was {sample_jwt} ok",
+            uuid="u1",
+            parent_uuid=None,
+            timestamp="2026-05-07T10:00:00Z",
+            role="user",
+            content=f"my session token was {sample_jwt} ok",
         )
         self.assertNotIn("eyJzdWIi", m.content)
         self.assertIn("<JWT-REDACTED>", m.content)
@@ -285,15 +352,17 @@ class TestTeamConfig(unittest.TestCase):
         claude_dir = td / ".claude"
         claude_dir.mkdir()
         (claude_dir / "settings.local.json").write_text(
-            json.dumps({
-                "total_recall": {
-                    "team_recall": {
-                        "url": "https://settings.example.com",
-                        "service_key": "settings-key",
-                        "engineer_id": "settings-engineer",
+            json.dumps(
+                {
+                    "total_recall": {
+                        "team_recall": {
+                            "url": "https://settings.example.com",
+                            "service_key": "settings-key",
+                            "engineer_id": "settings-engineer",
+                        }
                     }
                 }
-            }),
+            ),
             encoding="utf-8",
         )
         # Run from inside the fake repo so the walk-up finds settings.local.json
@@ -311,28 +380,30 @@ class TestTeamActivityFormatter(unittest.TestCase):
     def setUp(self) -> None:
         # Hyphens in module names confuse normal `import`; load via runpy.
         import runpy
+
         ns = runpy.run_path(str(_PLUGIN_DIR / "hooks" / "on-session-start.py"))
         self._format_team_activity = ns["_format_team_activity"]
         self._lookback_days = ns["TEAM_ACTIVITY_LOOKBACK_DAYS"]
 
     def _session(self, *, eid: str, days_ago: float, branch: str = "feat/x", turns: int = 10):
         from datetime import datetime, timedelta, timezone
+
         ts = (datetime.now(timezone.utc) - timedelta(days=days_ago)).isoformat()
         return {
-            "session_id":   f"sess-{eid}-{int(days_ago * 100)}",
-            "engineer_id":  eid,
+            "session_id": f"sess-{eid}-{int(days_ago * 100)}",
+            "engineer_id": eid,
             "project_slug": "C--proj-slug",
-            "started_at":   ts,
-            "ended_at":     ts,
-            "turn_count":   turns,
-            "git_branch":   branch,
-            "cwd":          "/repo",
+            "started_at": ts,
+            "ended_at": ts,
+            "turn_count": turns,
+            "git_branch": branch,
+            "cwd": "/repo",
         }
 
     def test_filters_out_current_engineer(self) -> None:
         sessions = [
             self._session(eid="robert", days_ago=0.5),
-            self._session(eid="daisy",  days_ago=1.0),
+            self._session(eid="daisy", days_ago=1.0),
             self._session(eid="robert", days_ago=2.0),
         ]
         block = self._format_team_activity(sessions, current_engineer="robert")
@@ -354,13 +425,13 @@ class TestTeamActivityFormatter(unittest.TestCase):
         # (rather than `break`) because list_recent_team_recall orders by
         # started_at — a stale row could appear before a fresh one.
         sessions = [
-            self._session(eid="daisy",  days_ago=1.0),
+            self._session(eid="daisy", days_ago=1.0),
             self._session(eid="morgan", days_ago=self._lookback_days + 5),
-            self._session(eid="casey",  days_ago=2.0),  # fresh, after a stale row
+            self._session(eid="casey", days_ago=2.0),  # fresh, after a stale row
         ]
         block = self._format_team_activity(sessions, current_engineer="robert")
-        self.assertIn("daisy",  block)
-        self.assertIn("casey",  block)  # not skipped despite earlier stale row
+        self.assertIn("daisy", block)
+        self.assertIn("casey", block)  # not skipped despite earlier stale row
         self.assertNotIn("morgan", block)
 
     def test_renders_branch_and_turn_count(self) -> None:
@@ -376,6 +447,7 @@ class TestResolveJsonl(unittest.TestCase):
 
     def setUp(self) -> None:
         import runpy
+
         ns = runpy.run_path(str(_PLUGIN_DIR / "hooks" / "on-session-stop.py"))
         self._resolve_jsonl = ns["_resolve_jsonl"]
 
@@ -413,10 +485,12 @@ class TestResolveJsonl(unittest.TestCase):
             original_home = Path.home
             Path.home = staticmethod(lambda: home_dir)  # type: ignore[assignment]
             try:
-                result = self._resolve_jsonl({
-                    "project_slug": "my-proj",
-                    # no session_id or transcript_path
-                })
+                result = self._resolve_jsonl(
+                    {
+                        "project_slug": "my-proj",
+                        # no session_id or transcript_path
+                    }
+                )
                 self.assertEqual(result, new)
             finally:
                 Path.home = original_home  # type: ignore[assignment]
@@ -437,6 +511,7 @@ class TestSessionStopMain(unittest.TestCase):
 
     def setUp(self) -> None:
         import runpy
+
         self._ns = runpy.run_path(str(_PLUGIN_DIR / "hooks" / "on-session-stop.py"))
         self._main = self._ns["main"]
         self._resolve_jsonl = self._ns["_resolve_jsonl"]
@@ -448,17 +523,27 @@ class TestSessionStopMain(unittest.TestCase):
         jsonl = proj_dir / "sess-001.jsonl"
         lines = [
             {
-                "type": "user", "uuid": "u1", "parentUuid": None,
-                "timestamp": "2026-05-08T10:00:00Z", "sessionId": "sess-001",
-                "gitBranch": "development", "cwd": "/repo",
+                "type": "user",
+                "uuid": "u1",
+                "parentUuid": None,
+                "timestamp": "2026-05-08T10:00:00Z",
+                "sessionId": "sess-001",
+                "gitBranch": "development",
+                "cwd": "/repo",
                 "message": {"role": "user", "content": "Hello world"},
             },
             {
-                "type": "assistant", "uuid": "a1", "parentUuid": "u1",
-                "timestamp": "2026-05-08T10:00:01Z", "sessionId": "sess-001",
-                "message": {"role": "assistant", "content": [
-                    {"type": "text", "text": "Hi there!"},
-                ]},
+                "type": "assistant",
+                "uuid": "a1",
+                "parentUuid": "u1",
+                "timestamp": "2026-05-08T10:00:01Z",
+                "sessionId": "sess-001",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "text", "text": "Hi there!"},
+                    ],
+                },
             },
         ]
         with jsonl.open("w", encoding="utf-8") as fh:
@@ -542,6 +627,7 @@ class TestSessionStopErrorIsolation(unittest.TestCase):
 
     def setUp(self) -> None:
         import runpy
+
         self._ns = runpy.run_path(str(_PLUGIN_DIR / "hooks" / "on-session-stop.py"))
         self._main = self._ns["main"]
 
@@ -577,8 +663,11 @@ class TestSessionStopErrorIsolation(unittest.TestCase):
             jsonl = proj_dir / "sess-team-fail.jsonl"
             lines = [
                 {
-                    "type": "user", "uuid": "u1", "parentUuid": None,
-                    "timestamp": "2026-05-08T10:00:00Z", "sessionId": "sess-team-fail",
+                    "type": "user",
+                    "uuid": "u1",
+                    "parentUuid": None,
+                    "timestamp": "2026-05-08T10:00:00Z",
+                    "sessionId": "sess-team-fail",
                     "message": {"role": "user", "content": "test message"},
                 },
             ]
@@ -588,6 +677,7 @@ class TestSessionStopErrorIsolation(unittest.TestCase):
 
             # Patch default_db_path to temp dir
             from lib import recall_db as recall_db_mod
+
             original_default = recall_db_mod.default_db_path
             recall_db_mod.default_db_path = lambda slug: tmpdir / "recall.db"  # type: ignore[assignment]
 
@@ -595,11 +685,15 @@ class TestSessionStopErrorIsolation(unittest.TestCase):
             # but patch ingest_session to raise
             import lib.team_config
             import lib.team_recall_client as trc_mod
+
             original_config = lib.team_config.load_team_recall_config
             original_ingest = trc_mod.ingest_session
 
             from lib.team_config import TeamRecallConfig
-            fake_cfg = TeamRecallConfig(url="https://fake.example.com", service_key="fake", engineer_id="test")
+
+            fake_cfg = TeamRecallConfig(
+                url="https://fake.example.com", service_key="fake", engineer_id="test"
+            )
             lib.team_config.load_team_recall_config = lambda *a, **kw: fake_cfg  # type: ignore[assignment]
             trc_mod.ingest_session = lambda **kw: (_ for _ in ()).throw(  # type: ignore[assignment]
                 trc_mod.TeamRecallError("simulated network failure")
