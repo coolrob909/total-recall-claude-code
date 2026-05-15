@@ -17,12 +17,12 @@ That lets us call the ingest hook on every Stop event without worrying.
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from .session_parser import Message, SessionSummary
-
 
 SCHEMA_VERSION = 1
 

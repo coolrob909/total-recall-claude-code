@@ -37,9 +37,8 @@ sys.path.insert(0, str(_PLUGIN_DIR))
 
 from lib.recall_db import RecallDB, default_db_path  # noqa: E402
 from lib.session_parser import fmt_iso_short  # noqa: E402
-from lib.team_config import load_team_recall_config, _resolve_project_root  # noqa: E402
+from lib.team_config import _resolve_project_root, load_team_recall_config  # noqa: E402
 from lib.team_recall_client import TeamRecallError, list_recent  # noqa: E402
-
 
 MAX_OUTPUT_CHARS = 12000  # ~3K tokens for local recall block
 PER_TURN_TRIM = 600  # chars per message before tail

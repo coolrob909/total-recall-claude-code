@@ -32,11 +32,10 @@ import json
 import os
 import re
 from collections import Counter
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Iterator
-
 
 # Line types in the JSONL we care about.
 KEEP_TYPES = {"user", "assistant"}

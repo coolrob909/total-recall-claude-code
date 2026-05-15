@@ -165,16 +165,16 @@ def main() -> int:
 
     print(f"✅ Drafted lesson at: {rel}\n")
     print("Next steps:")
-    print(f"  1. Open the file and tighten any sections that need editing")
-    print(f"  2. Add cross-references in the Related section if applicable")
-    print(f"  3. Update `.claude/team-memory/INDEX.md` to list this lesson")
-    print(f"  4. Stage + commit alongside the PR that fixes the underlying issue:")
-    print(f"")
+    print("  1. Open the file and tighten any sections that need editing")
+    print("  2. Add cross-references in the Related section if applicable")
+    print("  3. Update `.claude/team-memory/INDEX.md` to list this lesson")
+    print("  4. Stage + commit alongside the PR that fixes the underlying issue:")
+    print("")
     print(f"     git add {rel} .claude/team-memory/INDEX.md")
     print(f'     git commit -m "feat(team-memory): add lesson — {args.title.strip()}"')
-    print(f"")
-    print(f"Reviewer will check: scoped to a real failure mode, objective tone,")
-    print(f"no secrets, has a real example reference.")
+    print("")
+    print("Reviewer will check: scoped to a real failure mode, objective tone,")
+    print("no secrets, has a real example reference.")
     return 0
 
 

@@ -20,7 +20,7 @@ sys.path.insert(0, str(_PLUGIN_DIR))
 
 from lib.recall_db import RecallDB  # noqa: E402
 from lib.session_parser import Message, SessionSummary, parse_jsonl, redact_secrets  # noqa: E402
-from lib.team_config import TeamRecallConfig, load_team_recall_config  # noqa: E402
+from lib.team_config import load_team_recall_config  # noqa: E402
 
 
 def _make_jsonl(tmpdir: Path, lines: list[dict]) -> Path:
@@ -201,7 +201,9 @@ class TestRedaction(unittest.TestCase):
     def test_user_redactions_loaded_from_env_path(self) -> None:
         """Drop a redactions.json on disk, point TOTAL_RECALL_REDACTIONS at it,
         re-import the module, and verify the user pattern fires."""
-        import json, tempfile, importlib
+        import importlib
+        import json
+        import tempfile
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump([
                 {"pattern": r"MySecret[A-Za-z0-9]+", "replacement": "<USER-REDACTED>"},
